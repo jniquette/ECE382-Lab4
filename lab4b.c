@@ -16,23 +16,15 @@ extern void drawBall(ball_t ball);
 
 #define		TRUE			1
 #define		FALSE			0
-#define		UP_BUTTON		(P2IN & BIT5)
-#define		DOWN_BUTTON		(P2IN & BIT4)
-#define		AUX_BUTTON		(P2IN & BIT3)
-#define		LEFT_BUTTON		(P2IN & BIT2)
-#define		RIGHT_BUTTON	(P2IN & BIT1)
 #define		SECONDS			16000000
-
-
 
 void main() {
 
-	unsigned char	xPos, yPos, xVel, yVel, button_press, inverted;
+	unsigned char	xPos, yPos, xVel, yVel, inverted;
 
 	// === Initialize system ================================================
 	IFG1=0; /* clear interrupt flag1 */
 	WDTCTL=WDTPW+WDTHOLD; /* stop WD */
-	button_press = FALSE;
 
 
 	init();
