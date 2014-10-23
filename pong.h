@@ -1,7 +1,8 @@
 /*
  * pong.h
  * Author: Todd Branchflower
- * Date: 11 Oct 2013
+ * Modified by: C2C Justin Niquette
+ * Date: 23 Oct 2013
  * Description: Implements a subset of the pong game
  */
 

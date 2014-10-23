@@ -1,6 +1,12 @@
 #include "pong.h"
 #include <stdbool.h>
 
+/*
+ * pong.c
+ * Author: C2C Justin Niquette
+ * Date: 23 Oct 2013
+ * Description: Contains methods for a subset of the pong game
+ */
 
 extern void drawBallAsm(unsigned char x, unsigned char y);
 

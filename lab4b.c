@@ -1,17 +1,17 @@
 //-------------------------------------------------------------------------------
-//	Name:		Dr. Chris Coulston
+//	Name:		C2C Justin Niquette
 //	Term:		Fall 2014
 //	MCU:		MSP430G2553
-//	Lecture:	22
+//	Title:		Lab4
 //	Date:		16 October 2014
-//	Note:		Demonstration of how to combine C and assembly lanugage.
+//	Note:		Bouncing Balls using C and Assembly with inversion and ball
 //-------------------------------------------------------------------------------
 #include <msp430g2553.h>
 #include "pong.h"
 
 extern void init();
 extern void initNokia();
-extern void clearDisplay();
+extern void clearDisplay(unsigned char);
 extern void drawBall(ball_t ball);
 
 #define		TRUE			1
@@ -24,10 +24,10 @@ extern void drawBall(ball_t ball);
 #define		SECONDS			16000000
 
 
-	unsigned char	xPos, yPos, xVel, yVel, radius, button_press, inverted;
 
 void main() {
 
+	unsigned char	xPos, yPos, xVel, yVel, button_press, inverted;
 
 	// === Initialize system ================================================
 	IFG1=0; /* clear interrupt flag1 */
@@ -37,10 +37,10 @@ void main() {
 
 	init();
 	initNokia();
-	clearDisplay();
+	clearDisplay(FALSE);
 	xPos=1;		yPos=1;
 	xVel=1;		yVel=1;
-	radius=2;
+	inverted= FALSE;
 
 	ball_t myBall1;
 	ball_t myBall2;
@@ -49,12 +49,13 @@ void main() {
 
 	while(1) {
 
+		clearDisplay(inverted);
 		myBall1 = moveBall(myBall1);
 		drawBall(myBall1);
 		myBall2 = moveBall(myBall2);
 		drawBall(myBall2);
 		__delay_cycles(SECONDS/4);
-		clearDisplay();
+		inverted = (inverted +1)%2;
 	}
 }
 

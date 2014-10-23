@@ -185,23 +185,31 @@ pollSPI:
 
 ;-------------------------------------------------------------------------------
 ;	Name:		clearDisplay
-;	Inputs:		none
+;	Inputs:		R12		Whether or not the screen is inverted
 ;	Outputs:	none
 ;	Purpose:	Writes 0x360 blank 8-bit columns to the Nokia display
 ;-------------------------------------------------------------------------------
 clearDisplay:
 	push	R11
-	push	R12
 	push	R13
+	push	R12
 
 	mov.w	#0x00, R12			; set display address to 0,0
 	mov.w	#0x00, R13
 	call	#setAddress
 
 	mov.w	#0x01, R12			; write a "clear" set of pixels
-	mov.w	#0x00, R13			; to every byt on the display
-
 	mov.w	#0x360, R11			; loop counter
+
+	pop		r13					; Get the inverted parameter
+	push	r13
+	cmp		#0, r13
+	jne		useBlackToClear
+	jmp 	clearLoop
+
+useBlackToClear:
+	mov.w	#0xFF, R13			; to every byt on the display
+
 clearLoop:
 	call	#writeNokiaByte
 	dec.w	R11
@@ -211,8 +219,8 @@ clearLoop:
 	mov.w	#0x00, R13
 	call	#setAddress
 
-	pop		R13
 	pop		R12
+	pop		R13
 	pop		R11
 
 	ret
@@ -387,6 +395,7 @@ loopdB:
 ;	Name:		drawBall
 ;	Inputs:		R12 row to draw ball
 ;				R13	column to draw ball
+;				R14 true if inverted colors
 ;	Outputs:	none
 ;	Purpose:	draw an 8x8 ball of black pixels at screeen cordinates	8*row,8*col
 ;				The display screen, for the purposes of this routine, is divided
@@ -407,6 +416,29 @@ drawBallAsm:
 
 	mov		#1, R12				; data byte
 
+	cmp		#0, R14				; Check color of ball
+	jnz		drawBlackBall
+
+drawWhiteBall:
+	mov		#195, r13			; chamfer columns
+	call	#writeNokiaByte		; draw the pixels
+	mov		#129, r13			; chamfer columns
+	call	#writeNokiaByte		; draw the pixels
+
+	mov.w	#0x04, R5			; loop 4 pixel columns
+	mov		#0x00, r13
+loopdWhiteBall:
+	call	#writeNokiaByte		; draw the pixels
+	dec.w	R5
+	jnz		loopdWhiteBall
+
+	mov		#129, r13			; chamfer columns
+	call	#writeNokiaByte		; draw the pixels
+	mov		#195, r13			; chamfer columns
+	call	#writeNokiaByte		; draw the pixels
+	jmp		endDrawLoop
+
+drawBlackBall:
 	mov		#60, r13			; chamfer columns
 	call	#writeNokiaByte		; draw the pixels
 	mov		#126, r13			; chamfer columns
@@ -414,16 +446,17 @@ drawBallAsm:
 
 	mov.w	#0x04, R5			; loop 4 pixel columns
 	mov		#0xFF, r13
-loopdB2:
+loopBlackBall:
 	call	#writeNokiaByte		; draw the pixels
 	dec.w	R5
-	jnz		loopdB2
+	jnz		loopBlackBall
 
 	mov		#126, r13			; chamfer columns
 	call	#writeNokiaByte		; draw the pixels
 	mov		#60, r13			; chamfer columns
 	call	#writeNokiaByte		; draw the pixels
 
+endDrawLoop:
 	pop		R13
 	pop		R12
 	pop		R5
