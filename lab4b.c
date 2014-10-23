@@ -17,6 +17,7 @@ extern void drawBall(ball_t ball);
 #define		TRUE			1
 #define		FALSE			0
 #define		SECONDS			16000000
+#define		AUX_BUTTON		(P2IN & BIT3)
 
 void main() {
 
@@ -41,13 +42,17 @@ void main() {
 
 	while(1) {
 
+		if (AUX_BUTTON == 0) {
+			while(AUX_BUTTON == 0);
+			inverted = (inverted +1)%2;
+		}
+
 		clearDisplay(inverted);
 		myBall1 = moveBall(myBall1);
 		drawBall(myBall1);
 		myBall2 = moveBall(myBall2);
 		drawBall(myBall2);
 		__delay_cycles(SECONDS/4);
-		inverted = (inverted +1)%2;
 	}
 }
 
