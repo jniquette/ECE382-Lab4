@@ -408,6 +408,7 @@ drawBallAsm:
 	push	R5
 	push	R12
 	push	R13
+	push	R14
 
 	rla.w	R13					; the column address needs multiplied
 	rla.w	R13					; by 8in order to convert it into a
@@ -457,6 +458,7 @@ loopBlackBall:
 	call	#writeNokiaByte		; draw the pixels
 
 endDrawLoop:
+	pop		R14
 	pop		R13
 	pop		R12
 	pop		R5
